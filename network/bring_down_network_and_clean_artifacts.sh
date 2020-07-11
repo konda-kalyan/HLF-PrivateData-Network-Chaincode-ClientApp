@@ -1,0 +1,2 @@
+./bring_down_whole_network_on_all_machines.sh
+./clean_artifacts_on_all_machines.sh
