@@ -17,8 +17,8 @@ services:
                 max_attempts: 3
             placement:
                 constraints:
-                    - node.hostname == ip-172-31-8-85
-                    - engine.labels.aws.region == us-east-2
+                    - node.hostname == ip-172-31-9-192
+                    - engine.labels.aws.region == ap-south-1
         image: hyperledger/fabric-peer:amd64-1.4.4
         hostname: peer0.org1.example.com
         environment:
@@ -77,8 +77,8 @@ services:
                 max_attempts: 3
             placement:
                 constraints:
-                    - node.hostname == ip-172-31-8-85
-                    - engine.labels.aws.region == us-east-2
+                    - node.hostname == ip-172-31-9-192
+                    - engine.labels.aws.region == ap-south-1
         image: hyperledger/fabric-peer:amd64-1.4.4
         hostname: peer1.org1.example.com
         environment:

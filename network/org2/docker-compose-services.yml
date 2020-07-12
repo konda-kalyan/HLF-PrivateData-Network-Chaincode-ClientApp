@@ -21,15 +21,15 @@ services:
                 max_attempts: 3
             placement:
                 constraints:
-                    - node.hostname == ip-172-31-39-243
-                    - engine.labels.aws.region == us-east-2
+                    - node.hostname == ip-172-31-11-143
+                    - engine.labels.aws.region == ap-south-1
         image: hyperledger/fabric-ca:amd64-1.4.4
         hostname: ca.org2.example.com
         environment:
             - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
             - FABRIC_CA_SERVER_CA_NAME=ca_org2
             - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/752dd95c4768c72c42cf830ad350a4d069734d3b6b69a0fbd4c2217247c65520_sk
+            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/bd10a5065920c1d58cd1a781257ca6ddc96a42260aa50361519f0dba8905474f_sk
         ports:
             - "8054:7054"   
         command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
@@ -45,8 +45,8 @@ services:
                 max_attempts: 3
             placement:
                 constraints:
-                    - node.hostname == ip-172-31-39-243
-                    - engine.labels.aws.region == us-east-2
+                    - node.hostname == ip-172-31-11-143
+                    - engine.labels.aws.region == ap-south-1
         image: hyperledger/fabric-couchdb:amd64-0.4.18
         hostname: couchdb0_org2
         ports:
@@ -63,8 +63,8 @@ services:
                 max_attempts: 3
             placement:
                 constraints:
-                    - node.hostname == ip-172-31-39-243
-                    - engine.labels.aws.region == us-east-2
+                    - node.hostname == ip-172-31-11-143
+                    - engine.labels.aws.region == ap-south-1
         image: hyperledger/fabric-couchdb:amd64-0.4.18
         hostname: couchdb1_org2
         ports:
