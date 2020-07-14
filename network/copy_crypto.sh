@@ -14,5 +14,5 @@ sudo mkdir -p /var/mynetwork/bin
 #cd -
 sudo cp -R crypto-config /var/mynetwork/certs/
 sudo cp -R config /var/mynetwork/certs/
-sudo cp -R ../chaincodes/* /var/mynetwork/chaincode/
+sudo cp -R ../chaincode/* /var/mynetwork/chaincode/
 sudo cp -R bin/* /var/mynetwork/bin/

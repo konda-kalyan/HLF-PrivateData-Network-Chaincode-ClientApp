@@ -57,6 +57,7 @@ public final class EmpCouchDBCC extends ChaincodeBase {
 		List<String> params = stub.getParameters();
 		
         String funName = stub.getFunction();
+	System.out.println("++++++++++Kalyan: invoke: funciton name" + funName);
 				
         if (funName.equals("addEmployee"))
             return addEmployee(stub, params);
@@ -68,14 +69,16 @@ public final class EmpCouchDBCC extends ChaincodeBase {
             return queryEmpBySalaryGreaterThanXAmount(stub, params);
         else if (funName.equals("queryEmployees"))
             return queryEmployees(stub, params);
-		else if (funName.equals("queryEmpsByGivenEmpIDRange"))
+	else if (funName.equals("queryEmpsByGivenEmpIDRange"))
             return queryEmpsByGivenEmpIDRange(stub, params);
-		else if (funName.equals("queryEmpBySalaryGreaterThanXAmountWithPagination"))
+	else if (funName.equals("queryEmpBySalaryGreaterThanXAmountWithPagination"))
             return queryEmpBySalaryGreaterThanXAmountWithPagination(stub, params);
-		else if (funName.equals("getHistoryForKey"))
+	else if (funName.equals("getHistoryForKey"))
             return getHistoryForKey(stub, params);
-		
-		return newErrorResponse(responseError("Unsupported method", ""));
+        else if (funName.equals("queryPrivateData"))
+            return queryPrivateData(stub, params);
+	
+	return newErrorResponse(responseError("Unsupported method", ""));
     }
     
     private Response addEmployee(ChaincodeStub stub, List<String> args) {
@@ -86,11 +89,13 @@ public final class EmpCouchDBCC extends ChaincodeBase {
         
         String key = args.get(0);
         Employee employee = new Employee(key, args.get(1), args.get(2), Double.parseDouble(args.get(3)), args.get(4));
+        Employee pemployee = new Employee(key, args.get(1), args.get(2), Double.parseDouble(args.get(3)), args.get(4));
         
         try {
             if(checkString(stub.getStringState(key)))
                 return newErrorResponse(responseError("addEmployee: Employee already exists with employee ID: " + key, ""));
             stub.putState(key, (new ObjectMapper()).writeValueAsBytes(employee));
+            stub.putPrivateData("PDC_Employee_Salary", key, (new ObjectMapper()).writeValueAsBytes(pemployee));
             return newSuccessResponse(responseSuccess("addEmployee: Employeed added"));
         } catch (Throwable e) {
             return newErrorResponse(responseError(e.getMessage(), ""));
@@ -126,7 +131,7 @@ public final class EmpCouchDBCC extends ChaincodeBase {
     	
 		// args(0) - empID (nothing but key)
         if (args.size() != 1)
-            return newErrorResponse(responseError("queryEmployee: Incorrect number of arguments, expecting 1", ""));
+            return newErrorResponse(responseError("getHistoryForKey: Incorrect number of arguments, expecting 1", ""));
             
         try {
 			QueryResultsIterator<KeyModification> results = stub.getHistoryForKey(args.get(0));
@@ -159,6 +164,26 @@ public final class EmpCouchDBCC extends ChaincodeBase {
             String empString = stub.getStringState(args.get(0));
             if(!checkString(empString))
                 return newErrorResponse(responseError("queryEmployee: Employee doesn't exists", ""));
+            return newSuccessResponse((new ObjectMapper()).writeValueAsBytes(responseSuccessObject(empString)));
+        } catch(Throwable e){
+            return newErrorResponse(responseError(e.getMessage(), ""));
+        }
+    }
+	
+    // query private data
+    private Response queryPrivateData(ChaincodeStub stub, List<String> args) {
+			System.out.println("Kalyan: queryPrivateData: key: " + args.get(0));
+    	
+		// args(0) - empID (nothing but key)
+        if (args.size() != 1)
+            return newErrorResponse(responseError("queryPrivateData: Incorrect number of arguments, expecting 1", ""));
+            
+        try {
+            //String empString = stub.getStringState(args.get(0));
+	    String empString = stub.getPrivateDataUTF8("PDC_Employee_Salary", args.get(0));
+			System.out.println("Kalyan: queryPrivateData: last ");
+            if(!checkString(empString))
+                return newErrorResponse(responseError("queryPrivateData: Employee doesn't exists", ""));
             return newSuccessResponse((new ObjectMapper()).writeValueAsBytes(responseSuccessObject(empString)));
         } catch(Throwable e){
             return newErrorResponse(responseError(e.getMessage(), ""));

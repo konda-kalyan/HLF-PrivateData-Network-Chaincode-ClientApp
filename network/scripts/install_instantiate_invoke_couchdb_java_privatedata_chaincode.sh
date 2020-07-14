@@ -25,7 +25,7 @@ docker exec -e "CORE_PEER_LOCALMSPID=Org3MSP" -e "CORE_PEER_TLS_CERT_FILE=/opt/g
 # INSTANTIATING THE CHAINCODE
 # ===========================
 # add dummy employee with empID with 0
-docker exec "$CLI_NAME" peer chaincode instantiate -o "$ORDERER_NAME":7050 -C "$CHANNEL_NAME" -l java -n "$COUCHDB_JAVA_CC_NAME" "$COUCHDB_JAVA_CC_SRC" -v v0  -c '{"Args":["init", "0", "init_name", "init_dept", "5", "init_loc"]}' -P "OR('Org1MSP.member', 'Org2MSP.member', 'Org3MSP.member' )" --tls --cafile $ORDERER_CA
+docker exec "$CLI_NAME" peer chaincode instantiate -o "$ORDERER_NAME":7050 -C "$CHANNEL_NAME" -l java -n "$COUCHDB_JAVA_CC_NAME" "$COUCHDB_JAVA_CC_SRC" -v v0  -c '{"Args":["init", "0", "init_name", "init_dept", "5", "init_loc"]}' -P "OR('Org1MSP.member', 'Org2MSP.member', 'Org3MSP.member' )" --tls --cafile $ORDERER_CA --collections-config $PRIVATE_DATA_COLLECTION_DEFINITION_FILE_PATH
 
 sleep 3
 
@@ -98,6 +98,6 @@ sleep 10
 
 
 # ================================
-# QUERING CHAINCODE - Get history for a key now
+# QUERING PRIVATE DATA - Get employee data
 # ================================
-docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["getHistoryForKey", "1"]}'
+docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["queryPrivateData", "1"]}'
