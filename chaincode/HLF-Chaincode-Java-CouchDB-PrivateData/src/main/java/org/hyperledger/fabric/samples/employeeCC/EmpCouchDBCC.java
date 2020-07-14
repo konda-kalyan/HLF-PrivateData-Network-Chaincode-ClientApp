@@ -57,7 +57,7 @@ public final class EmpCouchDBCC extends ChaincodeBase {
 		List<String> params = stub.getParameters();
 		
         String funName = stub.getFunction();
-	System.out.println("++++++++++Kalyan: invoke: funciton name" + funName);
+	System.out.println("++++++++++Kalyan: invoke: funciton name - " + funName);
 				
         if (funName.equals("addEmployee"))
             return addEmployee(stub, params);
