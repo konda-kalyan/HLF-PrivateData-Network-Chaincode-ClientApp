@@ -25,7 +25,8 @@ docker exec -e "CORE_PEER_LOCALMSPID=Org3MSP" -e "CORE_PEER_TLS_CERT_FILE=/opt/g
 # INSTANTIATING THE CHAINCODE
 # ===========================
 # add dummy employee with empID with 0
-docker exec "$CLI_NAME" peer chaincode instantiate -o "$ORDERER_NAME":7050 -C "$CHANNEL_NAME" -l java -n "$COUCHDB_JAVA_CC_NAME" "$COUCHDB_JAVA_CC_SRC" -v v0  -c '{"Args":["init", "0", "init_name", "init_dept", "5", "init_loc"]}' -P "OR('Org1MSP.member', 'Org2MSP.member', 'Org3MSP.member' )" --tls --cafile $ORDERER_CA --collections-config $PRIVATE_DATA_COLLECTION_DEFINITION_FILE_PATH
+#docker exec "$CLI_NAME" peer chaincode instantiate -o "$ORDERER_NAME":7050 -C "$CHANNEL_NAME" -l java -n "$COUCHDB_JAVA_CC_NAME" "$COUCHDB_JAVA_CC_SRC" -v v0  -c '{"Args":["init", "0", "init_name", "init_dept", "5", "init_loc"]}' -P "OR('Org1MSP.member', 'Org2MSP.member', 'Org3MSP.member' )" --tls --cafile $ORDERER_CA --collections-config $PRIVATE_DATA_COLLECTION_DEFINITION_FILE_PATH
+docker exec "$CLI_NAME" peer chaincode instantiate -o "$ORDERER_NAME":7050 -C "$CHANNEL_NAME" -l java -n "$COUCHDB_JAVA_CC_NAME" "$COUCHDB_JAVA_CC_SRC" -v v0  -c '{"Args":["init", "0", "init_name", "init_dept", "5", "init_loc"]}' -P "OR('Org1MSP.member', 'Org2MSP.member', 'Org3MSP.member' )" --tls --cafile $ORDERER_CA
 
 sleep 3
 
@@ -34,24 +35,24 @@ sleep 3
 # ================================
 docker exec "$CLI_NAME" peer chaincode list --instantiated -C "$CHANNEL_NAME" --tls --cafile $ORDERER_CA
 
-sleep 10
+sleep 3
 
 # ================================
 # INVOKING CHAINCODE	(Adding multiple employees)
 # ================================
 # adds employee with given values
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["addEmployee","1", "Kalyan", "Blockchain", "100", "Hyd"]}'
-sleep 10
+sleep 3
 
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["addEmployee","2", "Fabric", "Hyperledger", "1004", "Delhi"]}'
-sleep 10
+sleep 3
 
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["addEmployee","3", "Kalyan", "Blockchain", "15", "Hyd"]}'
-sleep 10
+sleep 3
 
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["addEmployee","4", "Konda", "Fabric", "10003", "Blr"]}'
 
-sleep 10
+sleep 3
 
 # ================================
 # QUERING CHAINCODE - Normal regular query (query employee by id)
@@ -82,24 +83,27 @@ docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --ca
 # INVOKING CHAINCODE - Update employee
 # ================================
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["updateEmployee", "1", "Raja", "AI", "89", "Bvrm"]}'
-sleep 10
+sleep 3
 
 # ================================
 # INVOKING CHAINCODE - Update employee again
 # ================================
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["updateEmployee", "1", "Tinku", "Some", "59", "Pkl"]}'
-sleep 10
+sleep 3
 
 # ================================
 # QUERING CHAINCODE - Check the updates now	(Normal regular query (query employee by id))
 # ================================
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["queryEmployee", "1"]}'
-sleep 10
+sleep 3
+
+exit
 
 # ================================
 # QUERING PRIVATE DATA - Get employee data - Accessing from Org1 Peer (we should get result)
 # ================================
 docker exec "$CLI_NAME" peer chaincode invoke -o "$ORDERER_NAME":7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $COUCHDB_JAVA_CC_NAME -c '{"Args":["queryPrivateData", "1"]}'
+
 
 # ================================
 # QUERING PRIVATE DATA - Get employee data - Accessing from Org2 Peer (we should get result)

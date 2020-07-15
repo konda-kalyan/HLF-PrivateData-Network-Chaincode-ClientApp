@@ -89,14 +89,16 @@ public final class EmpCouchDBCC extends ChaincodeBase {
         
         String key = args.get(0);
         Employee employee = new Employee(key, args.get(1), args.get(2), Double.parseDouble(args.get(3)), args.get(4));
-        Employee pemployee = new Employee(key, args.get(1), args.get(2), Double.parseDouble(args.get(3)), args.get(4));
+        //Employee pemployee = new Employee(key, args.get(1), args.get(2), Double.parseDouble(args.get(3)), args.get(4));
         
         try {
             if(checkString(stub.getStringState(key)))
                 return newErrorResponse(responseError("addEmployee: Employee already exists with employee ID: " + key, ""));
             stub.putState(key, (new ObjectMapper()).writeValueAsBytes(employee));
-            stub.putPrivateData("PDC_Employee_Salary", key, (new ObjectMapper()).writeValueAsBytes(pemployee));
-            return newSuccessResponse(responseSuccess("addEmployee: Employeed added"));
+            //stub.putPrivateData("PDC_Employee_Salary", key, (new ObjectMapper()).writeValueAsBytes(pemployee));
+	    byte[] payload = new ObjectMapper().writeValueAsBytes(employee);
+            return new Response(200, "addEmployee: Employeed added", payload);
+            //return newSuccessResponse(responseSuccess("addEmployee: Employeed added"));
         } catch (Throwable e) {
             return newErrorResponse(responseError(e.getMessage(), ""));
         }
@@ -164,7 +166,10 @@ public final class EmpCouchDBCC extends ChaincodeBase {
             String empString = stub.getStringState(args.get(0));
             if(!checkString(empString))
                 return newErrorResponse(responseError("queryEmployee: Employee doesn't exists", ""));
-            return newSuccessResponse((new ObjectMapper()).writeValueAsBytes(responseSuccessObject(empString)));
+
+	    byte[] payload = new ObjectMapper().writeValueAsBytes(empString);
+            return new Response(200, "queryEmployee: queried employee", payload);
+//            return newSuccessResponse((new ObjectMapper()).writeValueAsBytes(responseSuccessObject(empString)));
         } catch(Throwable e){
             return newErrorResponse(responseError(e.getMessage(), ""));
         }
